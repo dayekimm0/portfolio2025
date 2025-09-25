@@ -1,4 +1,4 @@
-# 김다예 | Frontend Developer 🪽
+# 김다예 | Design & Publishing 🪽
 
 React 기반 모던 웹 & 인터랙티브 UI 개발에 집중하고 있어요.
 
