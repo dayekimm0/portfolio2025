@@ -1,10 +1,13 @@
-import React from "react";
-import { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
+  overflow: hidden;
   transition: all 0.3s;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+
   &:hover {
     scale: 0.98;
     cursor: pointer;
@@ -13,9 +16,14 @@ const Wrapper = styled.div`
 
 const Image = styled.img`
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   border-radius: 6px;
+  transition: opacity 0.3s ease;
+
+  ${Wrapper}:hover & {
+    filter: blur(2px);
+  }
 `;
 
 const Overlay = styled.div`
@@ -79,10 +87,19 @@ const StyledButton = styled.button`
   }
 `;
 
-const ProjectThumbnail = ({ src, title, icons, view, code, onPdfClick }) => {
+// ✅ onViewClick props 추가
+const ProjectThumbnail = ({
+  src,
+  title,
+  icons,
+  view,
+  code,
+  onPdfClick,
+  onViewClick,
+}) => {
   const wrapperRef = useRef(null);
   return (
-    <Wrapper onClick={onPdfClick}>
+    <Wrapper onClick={onPdfClick} ref={wrapperRef}>
       <Image src={src} alt={title} />
       <Overlay>
         <Title>{title}</Title>
@@ -96,7 +113,11 @@ const ProjectThumbnail = ({ src, title, icons, view, code, onPdfClick }) => {
             <StyledButton
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(view, "_blank");
+                if (onViewClick) {
+                  onViewClick();
+                } else {
+                  window.open(view, "_blank");
+                }
               }}
             >
               VIEW

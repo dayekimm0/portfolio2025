@@ -77,7 +77,7 @@ function Root() {
         <div id="profile">
           <Profile />
         </div>
-        {/* <Event /> */}
+        <Event />
         <div id="projects">
           <ProjectPart />
         </div>

@@ -1,67 +1,81 @@
-import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
-import line from "../images/line.svg";
+import React, { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
 
-gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
-
-const Container = styled.div`
-  width: 100%;
-  height: 100vh;
-  background: var(--dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const fallParticles = keyframes`
+  0% { transform: translateY(-50px) scale(0.5); opacity: 0; } /* 시작시 안보임 */
+  20% { opacity: 0.8; } /* 움직이면서 나타남 */
+  100% { transform: translateY(100vh) scale(1); opacity: 0; }
 `;
 
-const SvgWrapper = styled.svg`
-  width: 50px; /* 세로 용수철 폭 */
-  height: 100%; /* 세로 전체 높이 */
-  overflow: visible;
+const EventWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+`;
 
-  path {
-    stroke: white;
-    stroke-width: 2;
-    fill: transparent;
-  }
+const Particle = styled.div`
+  position: absolute;
+  top: -10px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  background: ${(props) => props.color};
+  border-radius: 50%;
+  filter: blur(2px);
+  box-shadow: 0 0 10px ${(props) => props.color},
+    0 0 20px ${(props) => props.color};
+  opacity: 0;
+
+  animation: ${fallParticles} ${(props) => props.duration}s linear infinite;
+  animation-delay: ${(props) => props.delay}s;
+  pointer-events: none;
+  animation-play-state: ${(props) => (props.pause ? "paused" : "running")};
 `;
 
 const Event = () => {
-  const pathRef = useRef(null);
+  const particleCount = 80;
+  const colors = ["#fff", "#ff4d6d"];
+  const [particles, setParticles] = useState([]);
+  const [cursorY, setCursorY] = useState(0);
 
   useEffect(() => {
-    const path = pathRef.current;
+    const arr = Array.from({ length: particleCount }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      size: Math.random() * 10 + 4,
+      duration: Math.random() * 8 + 6,
+      delay: Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      yOffset: Math.random() * window.innerHeight,
+    }));
+    setParticles(arr);
+  }, []);
 
-    // 여기 line.svg path 복사하거나 원하는 세로 용수철 모양으로 수정
-    const springPath =
-      "M25 0 C35 40 15 80 25 120 S25 200 25 240 S25 320 25 360";
-
-    // 최종 직선 path
-    const straightPath = "M25 0 L25 360";
-
-    path.setAttribute("d", springPath);
-
-    gsap.to(path, {
-      duration: 2,
-      ease: "power1.out",
-      morphSVG: straightPath,
-      scrollTrigger: {
-        trigger: path,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
+  useEffect(() => {
+    const handleMouseMove = (e) => setCursorY(e.clientY);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <Container>
-      <SvgWrapper viewBox="0 0 50 360">
-        <path ref={pathRef} />
-      </SvgWrapper>
-    </Container>
+    <EventWrapper>
+      {particles.map((p, i) => {
+        const particleY = (p.yOffset + p.duration * 10) % window.innerHeight; // 예시 계산
+        const pause = Math.abs(particleY - cursorY) < 50;
+
+        return (
+          <Particle
+            key={i}
+            size={p.size}
+            color={p.color}
+            duration={p.duration}
+            delay={p.delay}
+            style={{ left: p.x }}
+            pause={pause}
+          />
+        );
+      })}
+    </EventWrapper>
   );
 };
 

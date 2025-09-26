@@ -109,13 +109,14 @@ const Profile = () => {
   useEffect(() => {
     if (profileRef.current) {
       gsap.to(profileRef.current, {
-        y: -100,
+        y: -100, // 이동 거리 확대
+        scale: 1.05, // 약간 확대
         ease: "none",
         scrollTrigger: {
           trigger: profileRef.current,
           start: "top bottom",
           end: "bottom top",
-          scrub: true,
+          scrub: true, // 스크롤에 따라 부드럽게 움직임
         },
       });
     }

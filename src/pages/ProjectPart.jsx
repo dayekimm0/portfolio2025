@@ -10,6 +10,8 @@ import thumb1 from "../images/projectThumb1.png";
 import thumb2 from "../images/projectThumb2.png";
 import thumb3 from "../images/projectThumb3.png";
 import thumb4 from "../images/projectThumb4.png";
+import sideThumb1 from "../images/side4.png";
+import sideThumb2 from "../images/side2.png";
 import figmaIcon from "../images/figmaIcon.svg";
 import htmlIcon from "../images/htmlIcon.svg";
 import cssIcon from "../images/cssIcon.svg";
@@ -20,6 +22,9 @@ import firebaseIcon from "../images/firebaseIcon.svg";
 import scIcon from "../images/scIcon.svg";
 import viteIcon from "../images/viteIcon.svg";
 import netIcon from "../images/netIcon.svg";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div`
   width: 100%;
@@ -46,6 +51,20 @@ const Projects = styled.div`
   right: 11%;
   opacity: 0;
   transform: translateY(50px);
+`;
+
+const InfoBox = styled.div`
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  padding: 12px 0px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  color: var(--accent);
 `;
 
 const TeamProjectThumb = styled.div`
@@ -105,16 +124,23 @@ const ProjectPart = () => {
 
   const sp = [
     {
-      src: sidethumb1,
-      title: "Flex Project",
-      icons: [figmaIcon, htmlIcon, cssIcon, jsIcon],
-      view: "https://flexproject2.netlify.app/",
-      code: "https://github.com/dayekimm0/musicPlayer",
+      src: sideThumb1,
+      title: "로켓프레시 리브랜딩 YumFresh APP",
+      icons: [figmaIcon],
+      view: "https://musicplayer-daye.netlify.app/",
+      code: "",
+    },
+    {
+      src: sideThumb2,
+      title: "TMDB API를 이용한 넷플릭스 Javascript Clone",
+      icons: [figmaIcon, htmlIcon, sassIcon, jsIcon],
+      view: "https://dayekimm0.github.io/netflix-js/",
+      code: "https://github.com/dayekimm0/netflix-js",
     },
     {
       src: sidethumb1,
-      title: "로켓프레시 리브랜딩 YumFresh APP",
-      icons: [figmaIcon],
+      title: "Music Player",
+      icons: [figmaIcon, htmlIcon, cssIcon, jsIcon],
       view: "https://musicplayer-daye.netlify.app/",
       code: "https://github.com/dayekimm0/musicPlayer",
     },
@@ -157,6 +183,12 @@ const ProjectPart = () => {
 
       <Projects ref={projectsRef}>
         {activeFolder === "team" && (
+          <InfoBox>
+            <FontAwesomeIcon icon={faCircleInfo} />팀 프로젝트를 클릭하면
+            프로젝트에 대한 PDF를 확인할 수 있습니다.
+          </InfoBox>
+        )}
+        {activeFolder === "team" && (
           <TeamProjectThumb>
             {tp.map((project, index) => (
               <ProjectThumbnail
@@ -182,12 +214,16 @@ const ProjectPart = () => {
                 view={project.view}
                 code={project.code}
                 onPdfClick={() => setPdfModal(project.pdf)}
+                onViewClick={
+                  project.title === "로켓프레시 리브랜딩 YumFresh APP"
+                    ? () => alert("아직 준비 중인 프로젝트입니다!")
+                    : undefined
+                }
               />
             ))}
           </SideProjectThumb>
         )}
       </Projects>
-      {/* PDF 모달 */}
       {pdfModal && (
         <PdfModal pdfUrl={pdfModal} onClose={() => setPdfModal(null)} />
       )}
